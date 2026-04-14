@@ -1,5 +1,6 @@
 .section .rodata
 fmt: .string "%d "
+fmt_last: .string "%d\n"
 line: .string "\n"
 .section .text
 .global main
@@ -25,7 +26,6 @@ call malloc
 addi s5,a0,0                   # s5 = NGE stack ptr
 li t0,1                        # t0 = loop counter 
 beq a0,a0,loop
-
 loop:
 bgt t0,s0,done                 # if t0 > s0 done
 li t1,8
@@ -47,7 +47,6 @@ done:
 addi t0,s0,-1                  # start from rightmost element
 li s4,0                        # s4 = stack top index
 beq a0,a0,solve
-
 solve:
 blt t0,x0,ans                  # if t0 < 0 we are done
 beq s4,x0,minus                # if stack empty no NGE exists,so put -1
@@ -65,7 +64,6 @@ ld t6,0(t5)                    # t6 = s2[t0]
 bge t4,t6,else                 # if s2[top] > s2[t0] found NGE
 addi s4,s4,-1                  # pop stack
 beq a0,a0,solve
-
 
 else:
 beq s4,x0,minus                # if stack empty no NGE
@@ -99,25 +97,27 @@ beq a0,a0,solve
 
 ans:
 li s6,0 # s6 = counter
-
 printloop:
 bge s6,s0,exit          # if s6 >= s0 done
 li t1,8
 mul t2,s6,t1
 add t3,s3,t2
 ld a1,0(t3)       # a1 = s3[s6]
+addi t2,s0,-1
+beq s6,t2,print_last
 la a0,fmt
 call printf
 addi s6,s6,1                   # s6++
 beq a0,a0,printloop
+print_last:
+la a0,fmt_last
+call printf
+beq a0,a0,exit
 
 exit:
-la a0,line
-call printf
 addi s5,s5,0        # s2 = free atoi input arr
 addi a0,s2,0
 call free
-
 addi a0,s3,0        # s3 = free result
 call free
 addi a0,s5,0        # s5 = free stack
