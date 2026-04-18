@@ -61,7 +61,7 @@ ld t4,0(t3)                    # t4 = s2[top]
 mul t5,t0,t2
 add t5,t5,s2
 ld t6,0(t5)                    # t6 = s2[t0]
-bge t4,t6,else                 # if s2[top] > s2[t0] found NGE
+bgt t4,t6,else                 # if s2[top] > s2[t0] found NGE
 addi s4,s4,-1                  # pop stack
 beq a0,a0,solve
 
